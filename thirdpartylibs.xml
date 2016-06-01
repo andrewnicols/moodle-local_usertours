@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/bootstrap-tour.js</location>
+    <name>Bootstrap Tour</name>
+    <license>MIT</license>
+    <version>3f34ae2ccb0a3e8d78bdb5b4ab6665dfa4a517ce</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

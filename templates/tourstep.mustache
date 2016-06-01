@@ -1,0 +1,66 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_usertours/tourstep
+
+    Template used as a template to render step bubbles with their content
+    in a user tour.
+
+    Classes required for JS:
+    * arrow
+    * popover-title
+    * popover-content
+    * popover-navigation
+    * popover-title
+
+    Data attributes required for JS:
+    * data-role=prev
+    * data-role=next
+    * data-role=pause-resume
+    * data-pause-text
+    * data-resume-text
+    * data-role=end
+
+    Context variables required for this template:
+    * None
+
+    Example context (json):
+    {
+    }
+
+}}
+<div class="popover" role="tooltip">
+    <div class="arrow"></div>
+    <h3 class="popover-title"></h3>
+    <div class="popover-content"></div>
+    <div class="popover-navigation">
+        <div class="btn-group">
+            <button class="btn btn-sm btn-default" data-role="prev">&laquo; {{# str }} previous, moodle {{/ str }}</button>
+            <button class="btn btn-sm btn-default" data-role="next">{{# str }} next, moodle {{/ str }} &raquo;
+            </button>
+            <button class="btn btn-sm btn-default" data-role="pause-resume" {{!
+                }} data-pause-text="{{# str }} pausetour, local_usertours {{/ str }}" {{!
+                }} data-resume-text="{{# str }} resumetour, local_usertours {{/ str }}" {{!
+                }}>
+                {{# str }}  pausetour, local_usertours {{/ str }}
+            </button>
+        </div>
+        <button class="btn btn-sm btn-default" data-role="end">
+                {{# str }} endtour, local_usertours {{/ str }}
+        </button>
+    </div>
+</div>

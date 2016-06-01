@@ -74,10 +74,8 @@ class tour_table extends \flexible_table {
      * @return  string
      */
     protected function col_name(tour $tour) {
-        return \html_writer::link(
-                $tour->get_view_link(),
-                $tour->get_name()
-            );
+        global $OUTPUT;
+        return $OUTPUT->render(helper::render_tourname_inplace_editable($tour));
     }
 
     /**
@@ -87,7 +85,8 @@ class tour_table extends \flexible_table {
      * @return  string
      */
     protected function col_comments(tour $tour) {
-        return $tour->get_comment();
+        global $OUTPUT;
+        return $OUTPUT->render(helper::render_tourcomment_inplace_editable($tour));
     }
 
     /**

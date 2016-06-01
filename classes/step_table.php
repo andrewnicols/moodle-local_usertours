@@ -80,10 +80,8 @@ class step_table extends \flexible_table {
      * @return  string
      */
     protected function col_title(step $step) {
-        return \html_writer::link(
-                $step->get_edit_link(),
-                $step->get_title()
-            );
+        global $OUTPUT;
+        return $OUTPUT->render(helper::render_stepname_inplace_editable($step));
     }
 
     /**

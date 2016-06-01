@@ -285,6 +285,63 @@ class helper {
     }
 
     /**
+     * Render the inplace editable used to edit the tour name.
+     *
+     * @param   tour        $tour       The tour to edit.
+     * @return  string
+     */
+    public static function render_tourname_inplace_editable(tour $tour) {
+        return new \core\output\inplace_editable(
+                'local_usertours',
+                'tourname',
+                $tour->get_id(),
+                true,
+                \html_writer::link(
+                    $tour->get_view_link(),
+                    $tour->get_name()
+                ),
+                $tour->get_name()
+            );
+    }
+
+    /**
+     * Render the inplace editable used to edit the tour comment
+     *
+     * @param   tour        $tour       The tour to edit.
+     * @return  string
+     */
+    public static function render_tourcomment_inplace_editable(tour $tour) {
+        return new \core\output\inplace_editable(
+                'local_usertours',
+                'tourcomment',
+                $tour->get_id(),
+                true,
+                $tour->get_comment(),
+                $tour->get_comment()
+            );
+    }
+
+    /**
+     * Render the inplace editable used to edit the step name.
+     *
+     * @param   step        $step       The step to edit.
+     * @return  string
+     */
+    public static function render_stepname_inplace_editable(step $step) {
+        return new \core\output\inplace_editable(
+                'local_usertours',
+                'stepname',
+                $step->get_id(),
+                true,
+                \html_writer::link(
+                    $step->get_edit_link(),
+                    $step->get_title()
+                ),
+                $step->get_title(false)
+            );
+    }
+
+    /**
      * Get all of the tours.
      *
      * @return  stdClass[]

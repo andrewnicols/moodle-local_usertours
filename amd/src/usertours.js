@@ -56,7 +56,14 @@ function(ajax, BootstrapTour, $, templates, str) {
                     }
                 ])[0],
                 templates.render('local_usertours/tourstep', {})
-            ).then(function(response, template) {
+            )
+            .then(function(response, template) {
+                response.tourConfig.steps.forEach(function(value) {
+                    // MDL-51700 was not backported to 3.0, so we must some coerce values to booleans.
+                    value.backdrop = value.backdrop == "1";
+                    value.orphan = value.orphan == "1";
+                    value.reflex = value.reflex == "1";
+                });
                 usertours.startBootstrapTour(tourId, template[0], response.tourConfig);
             });
         },

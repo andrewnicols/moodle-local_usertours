@@ -74,7 +74,10 @@ function(ajax, BootstrapTour, $, templates, str) {
         addResetLink: function() {
             str.get_string('resettouronpage', 'local_usertours')
                 .done(function(s) {
-                    $('.logininfo').append(
+                    // Grab the last item in the page of these.
+                    $('footer, .logininfo')
+                    .last()
+                    .append(
                         '<div class="usertour">' +
                             '<a href="#" data-action="local_usertours/resetpagetour">' +
                                 s +

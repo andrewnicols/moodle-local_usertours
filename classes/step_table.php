@@ -124,7 +124,8 @@ class step_table extends \flexible_table {
         if ($step->is_last_step()) {
             $actions[] = helper::get_filler_icon();
         } else {
-            $actions[] = helper::format_icon_link($step->get_movedown_link(), 't/down', get_string('movestepdown', 'local_usertours'));
+            $actions[] = helper::format_icon_link($step->get_movedown_link(), 't/down',
+                    get_string('movestepdown', 'local_usertours'));
         }
 
         $actions[] = helper::format_icon_link($step->get_edit_link(), 't/edit', get_string('edit'));

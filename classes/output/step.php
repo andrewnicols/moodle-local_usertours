@@ -62,7 +62,7 @@ class step implements \renderable {
             'content'   => external_format_string($step->get_content(), $PAGE->context->id, true),
             'element'   => $step->get_target()->convert_to_css(),
 
-		];
+        ];
 
         $result->content = str_replace("\n", "<br>\n", $result->content);
 

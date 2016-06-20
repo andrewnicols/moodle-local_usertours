@@ -65,7 +65,7 @@ function($, ajax, str, Y, templates, notification) {
         },
 
         updateDialogueContent: function(content) {
-            // Update the dialogue content
+            // Update the dialogue content.
             var dialogue = manager.getDialogue();
 
             dialogue

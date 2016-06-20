@@ -37,7 +37,7 @@ class block extends base {
      */
     public function convert_to_css() {
         // The block has the following CSS class selector style:
-        // .block-region .block_[name]
+        // .block-region .block_[name] .
         return sprintf('.block-region .block_%s', $this->step->get_targetvalue());
     }
 

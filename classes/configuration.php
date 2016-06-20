@@ -98,7 +98,7 @@ class configuration {
      * @param   string          $default    The default option.
      * @return  array
      */
-    public static function get_placement_options($default = false) {
+    public static function get_placement_options($default = null) {
         $values = [
             'top'    => get_string('top',     'local_usertours'),
             'bottom' => get_string('bottom',  'local_usertours'),
@@ -106,7 +106,7 @@ class configuration {
             'right'  => get_string('right',   'local_usertours'),
         ];
 
-        if ($default === false) {
+        if ($default === null) {
             return $values;
         }
 

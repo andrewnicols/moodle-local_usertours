@@ -918,7 +918,7 @@ class tour_testcase extends advanced_testcase {
      *
      * @dataProvider sortorder_first_last_provider
      */
-    public function test_is_last_tour_calculated($sortorder, $islast, $total, $islast) {
+    public function test_is_last_tour_calculated($sortorder, $isfirst, $total, $islast) {
         $tour = new \local_usertours\tour();
 
         $rc = new \ReflectionClass('\local_usertours\tour');

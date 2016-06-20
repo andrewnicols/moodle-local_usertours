@@ -517,7 +517,6 @@ class step {
     public static function get_config_keys() {
         return [
             'placement',
-            //'delay',
             'orphan',
             'backdrop',
             'reflex',
@@ -539,14 +538,6 @@ class step {
             $mform->addElement('select', 'placement', get_string('placement', 'local_usertours'), $options);
             $mform->addHelpButton('placement', 'placement', 'local_usertours');
         }
-
-        /*
-        if (!$target->is_setting_forced('delay')) {
-            $mform->addElement('text', 'delay', get_string('delay', 'local_usertours'));
-            $mform->setType('delay', PARAM_INT);
-            $mform->addHelpButton('delay', 'delay', 'local_usertours');
-        }
-         */
 
         $this->add_config_field_to_form($mform, 'orphan');
         $this->add_config_field_to_form($mform, 'backdrop');

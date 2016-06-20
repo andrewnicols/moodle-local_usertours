@@ -134,18 +134,21 @@ class tour_table extends \flexible_table {
         if ($tour->is_first_tour()) {
             $actions[] = helper::get_filler_icon();
         } else {
-            $actions[] = helper::format_icon_link($tour->get_moveup_link(), 't/up', get_string('movetourup', 'local_usertours'));
+            $actions[] = helper::format_icon_link($tour->get_moveup_link(), 't/up',
+                    get_string('movetourup', 'local_usertours'));
         }
 
         if ($tour->is_last_tour($this->tourcount)) {
             $actions[] = helper::get_filler_icon();
         } else {
-            $actions[] = helper::format_icon_link($tour->get_movedown_link(), 't/down', get_string('movetourdown', 'local_usertours'));
+            $actions[] = helper::format_icon_link($tour->get_movedown_link(), 't/down',
+                    get_string('movetourdown', 'local_usertours'));
         }
 
         $actions[] = helper::format_icon_link($tour->get_view_link(), 't/viewdetails', get_string('view'));
         $actions[] = helper::format_icon_link($tour->get_edit_link(), 't/edit', get_string('edit'));
-        $actions[] = helper::format_icon_link($tour->get_export_link(), 't/export', get_string('exporttour', 'local_usertours'), 'local_usertours');
+        $actions[] = helper::format_icon_link($tour->get_export_link(), 't/export',
+                get_string('exporttour', 'local_usertours'), 'local_usertours');
         $actions[] = helper::format_icon_link($tour->get_delete_link(), 't/delete', get_string('delete'), null, [
                 'data-action'   => 'delete',
                 'data-id'       => $tour->get_id(),

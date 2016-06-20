@@ -86,10 +86,10 @@ class behat_local_usertours extends behat_base {
     public function i_open_the_user_tour_settings_page() {
         $this->execute('behat_navigation::i_navigate_to_node_in', [
                 get_string('usertours', 'local_usertours'),
-				implode(' > ', [
-					get_string('administrationsite', 'moodle'),
-					get_string('appearance', 'admin'),
-				])
+                implode(' > ', [
+                    get_string('administrationsite', 'moodle'),
+                    get_string('appearance', 'admin'),
+                ])
             ]);
     }
 }

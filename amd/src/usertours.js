@@ -7,7 +7,7 @@
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  */
 define(
-['core/ajax', 'local_usertours/bootstrap-tour', 'jquery', 'core/templates', 'core/str'],
+['core/ajax', 'local_usertours/tour', 'jquery', 'core/templates', 'core/str'],
 function(ajax, BootstrapTour, $, templates, str) {
     var usertours = {
         tourId: null,
@@ -91,21 +91,48 @@ function(ajax, BootstrapTour, $, templates, str) {
             if (usertours.currentTour) {
                 // End the current tour, but disable end tour handler.
                 tourConfig.onEnd = null;
-                usertours.currentTour.end();
+                usertours.currentTour.endTour();
+                delete usertours.currentTour;
             }
 
             // Add the various handlers.
             tourConfig.onEnd = usertours.markTourComplete;
             tourConfig.onShown = usertours.markStepShown;
 
+            // Normalize for the new library.
+            tourConfig.eventHandlers = {
+                afterEnd: [usertours.markTourComplete],
+            };
+
+            // Sort out the tour name.
+            tourConfig.tourName = tourConfig.name;
+            delete tourConfig.name;
+
             // Add the template to the configuration.
             // This enables translations of the buttons.
             tourConfig.template = template;
 
-            usertours.currentTour = new BootstrapTour(tourConfig);
+            tourConfig.steps = tourConfig.steps.map(function(step) {
+                if (typeof step.element !== 'undefined') {
+                    step.target = step.element;
+                    delete step.element;
+                }
 
-            usertours.currentTour.init(true);
-            usertours.currentTour.start(true);
+                if (typeof step.reflex !== 'undefined') {
+                    step.moveOnClick = !!step.reflex;
+                    delete step.reflex;
+                }
+
+                if (typeof step.content !== 'undefined') {
+                    step.body = step.content;
+                    delete step.content;
+                }
+
+                return step;
+            });
+
+            usertours.currentTour = new BootstrapTour(tourConfig);
+            usertours.currentTour.startTour();
         },
 
         /**

@@ -91,7 +91,7 @@ class tour extends external_api {
                 'name'      => new external_value(PARAM_RAW, 'Tour ID'),
                 'steps'     => new external_multiple_structure(
                     new external_single_structure([
-                        'title'             => new external_value(PARAM_RAW,
+                        'title'             => new external_value(PARAM_TEXT,
                                 'Step Title'),
                         'content'           => new external_value(PARAM_RAW,
                                 'Step Content'),
@@ -146,7 +146,7 @@ class tour extends external_api {
      */
     public static function reset_tour_parameters() {
         return new external_function_parameters([
-            'path'      => new external_value(PARAM_RAW, 'Current page location'),
+            'path'      => new external_value(PARAM_URL, 'Current page location'),
             'tourid'    => new external_value(PARAM_INT, 'Tour ID'),
         ]);
     }

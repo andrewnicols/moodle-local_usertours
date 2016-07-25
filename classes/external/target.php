@@ -127,7 +127,7 @@ class target extends external_api {
      */
     public static function set_target_returns() {
         return new external_single_structure([
-            'redirectTo'    => new external_value(PARAM_RAW, 'URL to redirect to'),
+            'redirectTo'    => new external_value(PARAM_URL, 'URL to redirect to'),
         ]);
     }
 }

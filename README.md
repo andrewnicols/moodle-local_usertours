@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/andrewnicols/moodle-local_usertours.svg?branch=MOODLE_31_STABLE)](https://travis-ci.org/andrewnicols/moodle-local_usertours)
+
 # Moodle Tours Plugin
 
 This Moodle plugin allows administrators to create tours of Moodle to
@@ -17,6 +19,7 @@ Installation of the User Tours plugins is simple, simply:
    folder.
 1. login to your Moodle site, login as administrator, and click on the
    'Notifications' link under 'Site administration'.
+1. View your tours by navigating to 'Site administration' -> Appearance -> User tours
 
 ## Sharing is caring
 

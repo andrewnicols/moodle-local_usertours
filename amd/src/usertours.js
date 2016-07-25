@@ -100,6 +100,10 @@ function(ajax, BootstrapTour, $, templates, str) {
             }
             tourConfig.onEnd = usertours.markTourComplete;
 
+            // Add the templtae to the configuration.
+            // This enables translations of the buttons.
+            tourConfig.template = template;
+
             usertours.currentTour = new BootstrapTour(tourConfig);
 
             usertours.currentTour.init(true);

@@ -760,25 +760,30 @@ Tour.prototype.announceStep = function (stepConfig) {
     this.currentStepNode.attr('role', 'dialog');
     this.currentStepNode.attr('tabindex', -1);
 
+    // Generate an ID for the current step node.
+    var stepId = 'tour-step-' + this.tourName + '-' + stepConfig.stepNumber;
+    this.currentStepNode.attr('id', stepId);
+
+    this.currentStepNode.find('[data-placeholder="body"]').first().attr('id', stepId + '-body');
+    this.currentStepNode.find('[data-placeholder="title"]').first().attr('id', stepId + '-title');
+    this.currentStepNode.attr('aria-labelledby', stepId + '-title');
+    //this.currentStepNode.attr('aria-describedby', stepId + '-body');
+
     // Configure ARIA attributes on the target.
     var target = this.getStepTarget(stepConfig);
     if (target) {
-        // Generate an ID for the current step node.
-        var stepId = 'tour-step-' + this.tourName + '-' + stepConfig.stepNumber;
-        this.currentStepNode.attr('id', stepId);
-
         if (!target.attr('tabindex')) {
             target.attr('tabindex', -1);
         }
 
-        target.data('original-labelledby', target.attr('aria-labelledby')).attr('aria-labelledby', stepId).focus();
+        target
+        //.data('original-labelledby', target.attr('aria-labelledby'))
+        //.attr('aria-labelledby', stepId + '-title')
+        .data('original-describedby', target.attr('aria-describedby')).attr('aria-describedby', stepId + '-body').focus();
     } else {
         // Focus on the step instead.
         this.currentStepNode.focus();
     }
-
-    // TODO
-    // Capture tab moves if possible.
 
     return this;
 };
@@ -956,6 +961,10 @@ Tour.prototype.hide = function (transition) {
         if (target) {
             if (target.data('original-labelledby')) {
                 target.attr('aria-labelledby', target.data('original-labelledby'));
+            }
+
+            if (target.data('original-describedby')) {
+                target.attr('aria-describedby', target.data('original-describedby'));
             }
 
             if (target.data('original-tabindex')) {

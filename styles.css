@@ -157,8 +157,8 @@ div[data-flexitour="step-background"] {
 }
 
 div[data-flexitour="step-background-fader"],
-div[data-flexitour="step-backdrop"] > td,
-div[data-flexitour="step-backdrop"] {
+[data-flexitour="step-backdrop"] > td,
+[data-flexitour="step-backdrop"] {
     z-index: 4032;
     position: relative;
 }

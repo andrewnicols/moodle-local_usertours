@@ -1200,9 +1200,8 @@ Tour.prototype.positionBackdrop = function (stepConfig) {
             }
 
             fader.fadeOut('2000', function () {
-                //$(this).remove();
+                $(this).remove();
             });
-            window.fader = fader;
         }
     }
     return this;

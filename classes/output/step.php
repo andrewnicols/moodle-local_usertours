@@ -59,7 +59,7 @@ class step implements \renderable {
 
         $result =  (object) [
             'title'     => external_format_string($step->get_title(), $PAGE->context->id, true),
-            'content'   => external_format_string($step->get_content(), $PAGE->context->id, true),
+            'content'   => clean_text($step->get_content()),
             'element'   => $step->get_target()->convert_to_css(),
 
         ];

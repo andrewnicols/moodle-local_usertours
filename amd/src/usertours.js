@@ -131,6 +131,8 @@ function(ajax, BootstrapTour, $, templates, str) {
                 return step;
             });
 
+            tourConfig.steps[2].delay = 250;
+
             usertours.currentTour = new BootstrapTour(tourConfig);
             usertours.currentTour.startTour();
         },

@@ -71,9 +71,9 @@ class tour {
     protected $name;
 
     /**
-     * @var $comment The tour comment.
+     * @var $description The tour description.
      */
-    protected $comment;
+    protected $description;
 
     /**
      * @var $pathmatch The tour pathmatch.
@@ -161,11 +161,11 @@ class tour {
     protected function reload_from_record($record, $clean = false) {
         $this->id           = $record->id;
         if ($clean) {
-            $this->name     = clean_param($record->name, PARAM_TEXT);
-            $this->comment  = clean_param($record->comment, PARAM_RAW);
+            $this->name         = clean_param($record->name, PARAM_TEXT);
+            $this->description  = clean_param($record->description, PARAM_RAW);
         } else {
-            $this->name     = $record->name;
-            $this->comment  = $record->comment;
+            $this->name         = $record->name;
+            $this->description  = $record->description;
         }
         $this->pathmatch    = $record->pathmatch;
         $this->enabled      = $record->enabled;
@@ -233,22 +233,22 @@ class tour {
     }
 
     /**
-     * The comments associated with the tour.
+     * The descriptions associated with the tour.
      *
      * @return  string
      */
-    public function get_comment() {
-        return $this->comment;
+    public function get_description() {
+        return $this->description;
     }
 
     /**
-     * Set the comment of the tour to the specified value.
+     * Set the description of the tour to the specified value.
      *
-     * @param   string      $value      The new comment.
+     * @param   string      $value      The new description.
      * @return  $this
      */
-    public function set_comment($value) {
-        $this->comment = $value;
+    public function set_description($value) {
+        $this->description = $value;
         $this->dirty = true;
 
         return $this;
@@ -350,13 +350,13 @@ class tour {
      */
     public function to_record() {
         return (object) array(
-            'id'         => $this->id,
-            'name'       => $this->name,
-            'comment'    => $this->comment,
-            'pathmatch'  => $this->pathmatch,
-            'enabled'    => $this->enabled,
-            'sortorder'  => $this->sortorder,
-            'configdata' => json_encode($this->config),
+            'id'            => $this->id,
+            'name'          => $this->name,
+            'description'   => $this->description,
+            'pathmatch'     => $this->pathmatch,
+            'enabled'       => $this->enabled,
+            'sortorder'     => $this->sortorder,
+            'configdata'    => json_encode($this->config),
         );
     }
 

@@ -35,5 +35,28 @@ function xmldb_local_usertours_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2015111604) {
+        // Define field sortorder to be added to usertours_tours.
+        $table = new xmldb_table('usertours_tours');
+        $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'enabled');
+
+        // Conditionally launch add field sortorder.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        \local_usertours\helper::reset_tour_sortorder();
+
+        // Rename field comment on table usertours_tours to description.
+        $table = new xmldb_table('usertours_tours');
+        $field = new xmldb_field('comment', XMLDB_TYPE_TEXT, null, null, null, null, null, 'name');
+
+        // Launch rename field description.
+        $dbman->rename_field($table, $field, 'description');
+
+        // Usertours savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111604, 'local', 'usertours');
+    }
+
     return true;
 }

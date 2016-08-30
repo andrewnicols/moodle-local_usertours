@@ -318,7 +318,7 @@ class manager {
             // Creating a new tour.
             $tour
                 ->set_name($data->name)
-                ->set_comment($data->comment)
+                ->set_description($data->description)
                 ->set_pathmatch($data->pathmatch)
                 ->set_enabled(!empty($data->enabled))
                 ;

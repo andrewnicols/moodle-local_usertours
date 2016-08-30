@@ -85,8 +85,8 @@ class tour_testcase extends advanced_testcase {
                         'name',
                         ['Lorem'],
                     ],
-                'comment' => [
-                        'comment',
+                'description' => [
+                        'description',
                         ['Lorem'],
                     ],
                 'pathmatch' => [
@@ -140,8 +140,8 @@ class tour_testcase extends advanced_testcase {
                         'name',
                         'Lorem',
                     ],
-                'comment' => [
-                        'comment',
+                'description' => [
+                        'description',
                         'Lorem',
                     ],
                 'pathmatch' => [

@@ -69,7 +69,7 @@ class editstep extends \moodleform {
         $this->step->get_target()->add_config_to_form($mform);
 
         // Title of the step.
-        $mform->addElement('text', 'title', get_string('title', 'local_usertours'));
+        $mform->addElement('textarea', 'title', get_string('title', 'local_usertours'));
         $mform->addRule('title', get_string('required'), 'required', null, 'client');
         $mform->setType('title', PARAM_TEXT);
 

@@ -70,7 +70,7 @@ class step_output_testcase extends advanced_testcase {
      * @dataProvider get_string_from_input_provider
      */
     public function test_get_string_from_input($string, $expected) {
-        $rc = new ReflectionClass(\local_usertours\output\step::class);
+        $rc = new ReflectionClass('\\local_usertours\\output\\step');
         $rcm = $rc->getMethod('get_string_from_input');
         $rcm->setAccessible(true);
         $this->assertEquals($expected, $rcm->invoke(null, $string));

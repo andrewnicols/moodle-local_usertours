@@ -233,7 +233,7 @@ class tour {
     }
 
     /**
-     * The descriptions associated with the tour.
+     * The description associated with the tour.
      *
      * @return  string
      */

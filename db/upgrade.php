@@ -51,5 +51,17 @@ function xmldb_local_usertours_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016052300, 'local', 'usertours');
     }
 
+    if ($oldversion < 2016052303) {
+        // Rename field comment on table usertours_tours to description.
+        $table = new xmldb_table('usertours_tours');
+        $field = new xmldb_field('comment', XMLDB_TYPE_TEXT, null, null, null, null, null, 'name');
+
+        // Launch rename field description.
+        $dbman->rename_field($table, $field, 'description');
+
+        // Usertours savepoint reached.
+        upgrade_plugin_savepoint(true, 2016052303, 'local', 'usertours');
+    }
+
     return true;
 }

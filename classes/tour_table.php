@@ -47,7 +47,7 @@ class tour_table extends \flexible_table {
         // Column definition.
         $this->define_columns(array(
             'name',
-            'comments',
+            'descriptions',
             'appliesto',
             'enabled',
             'actions',
@@ -55,7 +55,7 @@ class tour_table extends \flexible_table {
 
         $this->define_headers(array(
             get_string('name', 'local_usertours'),
-            get_string('comments', 'local_usertours'),
+            get_string('descriptions', 'local_usertours'),
             get_string('appliesto', 'local_usertours'),
             get_string('enabled', 'local_usertours'),
             get_string('actions', 'local_usertours'),
@@ -79,14 +79,14 @@ class tour_table extends \flexible_table {
     }
 
     /**
-     * Format the current row's comments column.
+     * Format the current row's descriptions column.
      *
      * @param   tour    $tour       The tour for this row.
      * @return  string
      */
-    protected function col_comments(tour $tour) {
+    protected function col_descriptions(tour $tour) {
         global $OUTPUT;
-        return $OUTPUT->render(helper::render_tourcomment_inplace_editable($tour));
+        return $OUTPUT->render(helper::render_tourdescription_inplace_editable($tour));
     }
 
     /**

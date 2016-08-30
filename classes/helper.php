@@ -305,19 +305,19 @@ class helper {
     }
 
     /**
-     * Render the inplace editable used to edit the tour comment
+     * Render the inplace editable used to edit the tour description
      *
      * @param   tour        $tour       The tour to edit.
      * @return  string
      */
-    public static function render_tourcomment_inplace_editable(tour $tour) {
+    public static function render_tourdescription_inplace_editable(tour $tour) {
         return new \core\output\inplace_editable(
                 'local_usertours',
-                'tourcomment',
+                'tourdescription',
                 $tour->get_id(),
                 true,
-                $tour->get_comment(),
-                $tour->get_comment()
+                $tour->get_description(),
+                $tour->get_description()
             );
     }
 

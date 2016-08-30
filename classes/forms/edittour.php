@@ -66,9 +66,9 @@ class edittour extends \moodleform {
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
 
-        // Admin-only comments.
-        $mform->addElement('textarea', 'comment', get_string('comments', 'local_usertours'));
-        $mform->setType('comment', PARAM_RAW);
+        // Admin-only descriptions.
+        $mform->addElement('textarea', 'description', get_string('comments', 'local_usertours'));
+        $mform->setType('description', PARAM_RAW);
 
         // Application.
         $mform->addElement('text', 'pathmatch', get_string('pathmatch', 'local_usertours'));

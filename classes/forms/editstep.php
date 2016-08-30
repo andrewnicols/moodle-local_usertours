@@ -72,10 +72,12 @@ class editstep extends \moodleform {
         $mform->addElement('textarea', 'title', get_string('title', 'local_usertours'));
         $mform->addRule('title', get_string('required'), 'required', null, 'client');
         $mform->setType('title', PARAM_TEXT);
+        $mform->addHelpButton('title', 'title', 'local_usertours');
 
         $mform->addElement('textarea', 'content', get_string('content', 'local_usertours'));
         $mform->addRule('content', get_string('required'), 'required', null, 'client');
         $mform->setType('content', PARAM_RAW);
+        $mform->addHelpButton('content', 'content', 'local_usertours');
 
         // Add the step configuration.
         // All step configuration is defined in the step.

@@ -33,6 +33,16 @@ $string['confirmstepremovaltitle'] = 'Confirm step removal';
 $string['confirmtourremovalquestion'] = 'Are you sure that you wish to remove this tour?';
 $string['confirmtourremovaltitle'] = 'Confirm tour removal';
 $string['content'] = 'Content';
+$string['content_help'] = 'This is the content of the step.
+You can enter a content in the following formats:
+<dl>
+    <dt>Plain text</dt>
+    <dd>A plain text description</dd>
+    <dt>Moodle MultiLang</dt>
+    <dd>A string which makes use of the Moodle MultiLang format</dd>
+    <dt>Moodle Translated string</dt>
+    <dd>A value found in a standard Moodle language file in the format identifier,component</dd>
+</dl>';
 $string['cssselector'] = 'CSS Selector';
 $string['defaultvalue'] = 'Default ({$a})';
 $string['delay'] = 'Delay before showing the step';
@@ -84,6 +94,16 @@ $string['target_selector'] = 'Selector';
 $string['target_unattached'] = 'Display in middle of page';
 $string['targettype'] = 'Target type';
 $string['title'] = 'Title';
+$string['title_help'] = 'This is the title shown at the top of the step.
+You can enter a title in the following formats:
+<dl>
+    <dt>Plain text</dt>
+    <dd>A plain text description</dd>
+    <dt>Moodle MultiLang</dt>
+    <dd>A string which makes use of the Moodle MultiLang format</dd>
+    <dt>Moodle Translated string</dt>
+    <dd>A value found in a standard Moodle language file in the format identifier,component</dd>
+</dl>';
 $string['top'] = 'Top';
 $string['tourconfig'] = 'Tour configuration file to import';
 $string['tourlist_explanation'] = 'You can create as many tours as you like and enable them for different parts of Moodle. Only one tour can be created per page.';

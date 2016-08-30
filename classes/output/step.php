@@ -58,10 +58,9 @@ class step implements \renderable {
         $step = $this->step;
 
         $result =  (object) [
-            'title'     => external_format_string($step->get_title(), $PAGE->context->id, true),
-            'content'   => external_format_string($step->get_content(), $PAGE->context->id, true),
+            'title'     => external_format_string(static::get_string_from_input($step->get_title()), $PAGE->context->id, true),
+            'content'   => external_format_string(static::get_string_from_input($step->get_content()), $PAGE->context->id, true),
             'element'   => $step->get_target()->convert_to_css(),
-
         ];
 
         $result->content = str_replace("\n", "<br>\n", $result->content);
@@ -71,5 +70,28 @@ class step implements \renderable {
         }
 
         return $result;
+    }
+
+    /**
+     * Attempt to fetch any matching langstring if the string is in the
+     * format identifier,component.
+     *
+     * @param   string  $string
+     * @return  string
+     */
+    protected static function get_string_from_input($string) {
+        $string = trim($string);
+
+        if (preg_match('|^([a-zA-Z][a-zA-Z0-9\.:/_-]*),([a-zA-Z][a-zA-Z0-9\.:/_-]*)$|', $string, $matches)) {
+            if ($matches[2] === 'moodle') {
+                $matches[2] = 'core';
+            }
+
+            if (get_string_manager()->string_exists($matches[1], $matches[2])) {
+                $string = get_string($matches[1], $matches[2]);
+            }
+        }
+
+        return $string;
     }
 }

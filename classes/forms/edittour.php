@@ -67,7 +67,7 @@ class edittour extends \moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         // Admin-only descriptions.
-        $mform->addElement('textarea', 'description', get_string('comments', 'local_usertours'));
+        $mform->addElement('textarea', 'description', get_string('description', 'local_usertours'));
         $mform->setType('description', PARAM_RAW);
 
         // Application.

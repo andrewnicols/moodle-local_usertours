@@ -48,6 +48,15 @@ $functions = array(
         'ajax'            => true,
     ),
 
+    'local_usertours_step_shown' => array(
+        'classname'       => 'local_usertours\external\tour',
+        'methodname'      => 'step_shown',
+        'description'     => 'Mark the specified step as completed for the current user',
+        'type'            => 'write',
+        'capabilities'    => '',
+        'ajax'            => true,
+    ),
+
     'local_usertours_complete_tour' => array(
         'classname'       => 'local_usertours\external\tour',
         'methodname'      => 'complete_tour',
@@ -56,6 +65,7 @@ $functions = array(
         'capabilities'    => '',
         'ajax'            => true,
     ),
+
     'local_usertours_reset_tour' => array(
         'classname'       => 'local_usertours\external\tour',
         'methodname'      => 'reset_tour',

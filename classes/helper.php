@@ -124,28 +124,6 @@ class helper {
     }
 
     /**
-     * Get the link used to show/hide a tour.
-     *
-     * @param   int         $tourid     The ID of the tour to display.
-     * @param   int         $visibility The intended visibility.
-     * @return  moodle_url              The URL.
-     */
-    public static function get_show_hide_tour_link($tourid, $visibility) {
-        $url = new \moodle_url('/local/usertours/configure.php', [
-                'id' => $tourid,
-                'sesskey' => sesskey(),
-            ]);
-
-        if ($visibility) {
-            $url->param('action', manager::ACTION_SHOWTOUR);
-        } else {
-            $url->param('action', manager::ACTION_HIDETOUR);
-        }
-
-        return $url;
-    }
-
-    /**
      * Get the link used to view the tour.
      *
      * @param   int         $tourid     The ID of the tour to display.
@@ -305,7 +283,7 @@ class helper {
     }
 
     /**
-     * Render the inplace editable used to edit the tour description
+     * Render the inplace editable used to edit the tour description.
      *
      * @param   tour        $tour       The tour to edit.
      * @return  string
@@ -319,6 +297,40 @@ class helper {
                 $tour->get_description(),
                 $tour->get_description()
             );
+    }
+
+    /**
+     * Render the inplace editable used to edit the tour enable state.
+     *
+     * @param   tour        $tour       The tour to edit.
+     * @return  string
+     */
+    public static function render_tourenabled_inplace_editable(tour $tour) {
+        global $OUTPUT;
+
+        if ($tour->is_enabled()) {
+            $icon = 't/hide';
+            $alt = get_string('disable');
+            $value = 1;
+        } else {
+            $icon = 't/show';
+            $alt = get_string('enable');
+            $value = 0;
+        }
+
+        $editable = new \core\output\inplace_editable(
+                'local_usertours',
+                'tourenabled',
+                $tour->get_id(),
+                true,
+                $OUTPUT->pix_icon($icon, $alt, 'moodle', [
+                        'title' => $alt,
+                    ]),
+                $value
+            );
+
+        $editable->set_type_toggle();
+        return $editable;
     }
 
     /**
@@ -349,7 +361,7 @@ class helper {
     public static function get_tours() {
         global $DB;
 
-        $tours = $DB->get_records('usertours_tours', array(), 'enabled DESC, sortorder ASC');
+        $tours = $DB->get_records('usertours_tours', array(), 'sortorder ASC');
         $return = [];
         foreach ($tours as $tour) {
             $return[$tour->id] = tour::load_from_record($tour);

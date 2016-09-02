@@ -106,20 +106,8 @@ class tour_table extends \flexible_table {
      * @return  string
      */
     protected function col_enabled(tour $tour) {
-        // Tour visibility toggle.
-        if ($tour->is_enabled()) {
-            return helper::format_icon_link(
-                    helper::get_show_hide_tour_link($tour->get_id(), 0),
-                    't/hide',
-                    get_string('disable')
-                );
-        } else {
-            return helper::format_icon_link(
-                    helper::get_show_hide_tour_link($tour->get_id(), 1),
-                    't/show',
-                    get_string('enable')
-                );
-        }
+        global $OUTPUT;
+        return $OUTPUT->render(helper::render_tourenabled_inplace_editable($tour));
     }
 
     /**

@@ -49,6 +49,10 @@ function local_usertours_inplace_editable($itemtype, $itemid, $newvalue) {
         $tour->set_description($newvalue)->persist();
 
         return helper::render_tourdescription_inplace_editable($tour);
+    } else if ($itemtype === 'tourenabled') {
+        $tour = helper::get_tour($itemid);
+        $tour->set_enabled(!!$newvalue)->persist();
+        return helper::render_tourenabled_inplace_editable($tour);
     } else if ($itemtype === 'stepname') {
         $step = helper::get_step($itemid);
         $step->set_title($newvalue)->persist();

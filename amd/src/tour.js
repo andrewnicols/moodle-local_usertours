@@ -766,6 +766,15 @@ Tour.prototype.addStepToPage = function (stepConfig) {
             // Update the popper location again.
             // When it is positioned whilst hidden, it can be inaccurate.
             this.currentStepPopper.update();
+
+            // Focus on the current step Node.
+            this.currentStepNode.focus();
+            window.setTimeout($.proxy(function () {
+                // After a brief delay, focus again.
+                // There seems to be an issue with Jaws where it only reads the dialogue title initially.
+                // This second focus causes it to read the full dialogue.
+                this.currentStepNode.focus();
+            }, this), 100);
         }, this));
     }, this));
 
@@ -784,40 +793,33 @@ Tour.prototype.announceStep = function (stepConfig) {
     // * https://www.w3.org/TR/wai-aria-practices/#dialog_nonmodal
     // * https://www.w3.org/TR/wai-aria-practices/#dialog_modal
 
-    // Generally, a modal dialog has a role of dialog.
-    this.currentStepNode.attr('role', 'dialog');
-    this.currentStepNode.attr('tabindex', -1);
-
     // Generate an ID for the current step node.
     var stepId = 'tour-step-' + this.tourName + '-' + stepConfig.stepNumber;
     this.currentStepNode.attr('id', stepId);
 
-    this.currentStepNode.find('[data-placeholder="body"]').first().attr('id', stepId + '-body');
-    this.currentStepNode.find('[data-placeholder="title"]').first().attr('id', stepId + '-title');
+    var bodyRegion = this.currentStepNode.find('[data-placeholder="body"]').first();
+    bodyRegion.attr('id', stepId + '-body');
+    bodyRegion.attr('role', 'document');
+
+    var headerRegion = this.currentStepNode.find('[data-placeholder="title"]').first();
+    headerRegion.attr('id', stepId + '-title');
+    headerRegion.attr('aria-labelledby', stepId + '-body');
+
+    // Generally, a modal dialog has a role of dialog.
+    this.currentStepNode.attr('role', 'dialog');
+    this.currentStepNode.attr('tabindex', 0);
     this.currentStepNode.attr('aria-labelledby', stepId + '-title');
-    //this.currentStepNode.attr('aria-describedby', stepId + '-body');
+    this.currentStepNode.attr('aria-describedby', stepId + '-body');
 
     // Configure ARIA attributes on the target.
     var target = this.getStepTarget(stepConfig);
     if (target) {
         if (!target.attr('tabindex')) {
-            target.attr('tabindex', -1);
+            target.attr('tabindex', 0);
         }
 
-        target
-        //.data('original-labelledby', target.attr('aria-labelledby'))
-        //.attr('aria-labelledby', stepId + '-title')
-        .data('original-describedby', target.attr('aria-describedby')).attr('aria-describedby', stepId + '-body')
-        //.attr('aria-labelledby', stepId + '-title ' + stepId + '-body')
-        ;
+        target.data('original-describedby', target.attr('aria-describedby')).attr('aria-describedby', stepId + '-body');
     }
-
-    this.currentStepNode.focus();
-    /*
-    $(this.currentStepNode).on('transitionend', function(e) {
-        $(e.currentTarget).focus();
-    });
-    */
 
     return this;
 };
@@ -833,25 +835,6 @@ Tour.prototype.handleKeyDown = function (e) {
     switch (e.keyCode) {
         case 27:
             this.endTour();
-            break;
-        // 117 = F6 - switch between step and target.
-        case 117:
-            (function () {
-                if (this.currentStepConfig.isOrphan) {
-                    return;
-                }
-                var activeElement = $(document.activeElement);
-                var stepTarget = this.getStepTarget(this.currentStepConfig);
-                if (this.currentStepNode.is(activeElement)) {
-                    stepTarget.focus();
-                } else if (stepTarget.is(activeElement)) {
-                    this.currentStepNode.focus();
-                } else if (activeElement.closest(stepTarget).length) {
-                    this.currentStepNode.focus();
-                } else {
-                    stepTarget.focus();
-                }
-            }).call(this);
             break;
 
         // 9 == Tab - trap focus for items with a backdrop.
@@ -1029,6 +1012,8 @@ Tour.prototype.hide = function (transition) {
 
     this.fireEventHandlers('afterHide');
 
+    this.currentStepNode = null;
+    this.currentStepPopper = null;
     return this;
 };
 

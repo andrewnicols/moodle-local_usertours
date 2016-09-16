@@ -738,7 +738,6 @@
             },
             right: function() {
                 var left = popper.left;
-                console.log(popper.width);
                 if (popper.right > data.boundaries.right) {
                     left = Math.min(popper.left, data.boundaries.right - popper.width);
                 }

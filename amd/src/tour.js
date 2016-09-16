@@ -117,8 +117,6 @@ Tour.prototype.init = function (config) {
     // Store the initial configuration.
     this.originalConfiguration = config || {};
 
-    this.sessionStorage = {};
-
     // Apply configuration.
     this.configure.apply(this, arguments);
 
@@ -256,7 +254,8 @@ Tour.prototype.setStepDefaults = function (stepDefaults) {
         delay: 0,
         moveOnClick: false,
         moveAfterTime: 0,
-        orphan: false
+        orphan: false,
+        direction: 1
     }, stepDefaults);
 
     return this;
@@ -379,7 +378,6 @@ Tour.prototype.isStepPotentiallyVisible = function (stepConfig) {
     }
 
     if (typeof stepConfig.delay !== 'undefined' && stepConfig.delay) {
-        // TODO...
         // Only return true if the activated has not been used yet.
         return true;
     }
@@ -402,7 +400,7 @@ Tour.prototype.isStepActuallyVisible = function (stepConfig) {
     }
 
     var target = this.getStepTarget(stepConfig);
-    if (target && target.length) {
+    if (target && target.length && target.is(':visible')) {
         // Without a target, there can be no step.
         return !!target.length;
     }
@@ -427,7 +425,7 @@ Tour.prototype.next = function () {
  * @chainable
  */
 Tour.prototype.previous = function () {
-    return this.gotoStep(this.getPreviousStepNumber());
+    return this.gotoStep(this.getPreviousStepNumber(), -1);
 };
 
 /**
@@ -437,18 +435,38 @@ Tour.prototype.previous = function () {
  * @param   {Integer}   stepNumber      The step number to display
  * @chainable
  */
-Tour.prototype.gotoStep = function (stepNumber) {
+Tour.prototype.gotoStep = function (stepNumber, direction) {
+    if (stepNumber < 0) {
+        return this.endTour();
+    }
+
     var stepConfig = this.getStepConfig(stepNumber);
+    if (stepConfig === null) {
+        return this.endTour();
+    }
+
+    return this._gotoStep(stepConfig, direction);
+};
+
+Tour.prototype._gotoStep = function (stepConfig, direction) {
     if (!stepConfig) {
         return this.endTour();
+    }
+
+    if (typeof stepConfig.delay !== 'undefined' && stepConfig.delay && !stepConfig.delayed) {
+        stepConfig.delayed = true;
+        window.setTimeout(this._gotoStep.bind(this), stepConfig.delay, stepConfig, direction);
+
+        return this;
+    } else if (!stepConfig.orphan && !this.isStepActuallyVisible(stepConfig)) {
+        var fn = direction == -1 ? 'getPreviousStepNumber' : 'getNextStepNumber';
+        return this.gotoStep(this[fn](stepConfig.stepNumber), direction);
     }
 
     this.hide();
 
     this.fireEventHandlers('beforeRender', stepConfig);
-
     this.renderStep(stepConfig);
-
     this.fireEventHandlers('afterRender', stepConfig);
 
     return this;
@@ -656,9 +674,6 @@ Tour.prototype.renderStep = function (stepConfig) {
     // This uses the currentNode.
     this.processStepListeners(stepConfig);
 
-    // Announce via ARIA.
-    this.announceStep(stepConfig);
-
     return this;
 };
 
@@ -713,7 +728,6 @@ Tour.prototype.addStepToPage = function (stepConfig) {
         });
 
         // Position the step on the page.
-        // TODO generalise this. At the moment it includes popper.
         animationTarget.promise().then($.proxy(function () {
             this.positionStep(stepConfig);
         }, this));
@@ -734,11 +748,25 @@ Tour.prototype.addStepToPage = function (stepConfig) {
         $(stepConfig.attachTo).append(this.currentStepNode);
 
         this.currentStepNode.offset(this.calculateStepPositionInPage());
+
+        this.currentStepPopper = new Popper($('body'), this.currentStepNode[0], {
+            placement: stepConfig.placement + '-start',
+            arrowElement: '[data-role="arrow"]',
+            // Empty the modifiers. We've already placed the step and don't want it moved.
+            modifiers: []
+        });
     }
 
     animationTarget.promise().done($.proxy(function () {
         // Fade the step in.
-        this.currentStepNode.fadeIn();
+        this.currentStepNode.fadeIn('', $.proxy(function () {
+            // Announce via ARIA.
+            this.announceStep(stepConfig);
+
+            // Update the popper location again.
+            // When it is positioned whilst hidden, it can be inaccurate.
+            this.currentStepPopper.update();
+        }, this));
     }, this));
 
     return this;
@@ -779,11 +807,17 @@ Tour.prototype.announceStep = function (stepConfig) {
         target
         //.data('original-labelledby', target.attr('aria-labelledby'))
         //.attr('aria-labelledby', stepId + '-title')
-        .data('original-describedby', target.attr('aria-describedby')).attr('aria-describedby', stepId + '-body').focus();
-    } else {
-        // Focus on the step instead.
-        this.currentStepNode.focus();
+        .data('original-describedby', target.attr('aria-describedby')).attr('aria-describedby', stepId + '-body')
+        //.attr('aria-labelledby', stepId + '-title ' + stepId + '-body')
+        ;
     }
+
+    this.currentStepNode.focus();
+    /*
+    $(this.currentStepNode).on('transitionend', function(e) {
+        $(e.currentTarget).focus();
+    });
+    */
 
     return this;
 };
@@ -926,10 +960,12 @@ Tour.prototype.endTour = function () {
 
     if (this.currentStepConfig) {
         var previousTarget = this.getStepTarget(this.currentStepConfig);
-        if (!previousTarget.attr('tabindex')) {
-            previousTarget.attr('tabindex', '-1');
+        if (previousTarget) {
+            if (!previousTarget.attr('tabindex')) {
+                previousTarget.attr('tabindex', '-1');
+            }
+            previousTarget.focus();
         }
-        previousTarget.focus();
     }
 
     this.hide(true);
@@ -1111,8 +1147,10 @@ Tour.prototype.positionStep = function (stepConfig) {
 
     this.currentStepPopper = new Popper(this.getStepTarget(stepConfig), content[0], {
         placement: stepConfig.placement + '-start',
+        removeOnDestroy: true,
         flipBehavior: flipBehavior,
-        removeOnDestroy: true
+        arrowElement: '[data-role="arrow"]',
+        modifiers: ['shift', 'offset', 'preventOverflow', 'keepTogether', this.centerPopper, 'arrow', 'flip', 'applyStyle']
     });
 
     return this;
@@ -1194,8 +1232,6 @@ Tour.prototype.positionBackdrop = function (stepConfig) {
             if (stepConfig.zIndex) {
                 backdrop.css('zIndex', stepConfig.zIndex);
                 background.css('zIndex', stepConfig.zIndex + 1);
-
-                // TODO Store the old zIndex.
                 targetNode.css('zIndex', stepConfig.zIndex + 2);
             }
 
@@ -1283,10 +1319,27 @@ Tour.prototype.calculatePosition = function (elem) {
     return null;
 };
 
+Tour.prototype.centerPopper = function (data) {
+    if (!this.isModifierRequired(Tour.prototype.centerPopper, this.modifiers.keepTogether)) {
+        console.warn('WARNING: keepTogether modifier is required by centerPopper modifier in order to work, be sure to include it before arrow!');
+        return data;
+    }
+
+    var placement = data.placement.split('-')[0];
+    var reference = data.offsets.reference;
+    var isVertical = ['left', 'right'].indexOf(placement) !== -1;
+
+    var len = isVertical ? 'height' : 'width';
+    var side = isVertical ? 'top' : 'left';
+
+    data.offsets.popper[side] += Math.max(reference[len] / 2 - data.offsets.popper[len] / 2, 0);
+
+    return data;
+};
+
 if ((typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object') {
     module.exports = Tour;
 }
-//# sourceMappingURL=tour.js.map
 
 return Tour;
 

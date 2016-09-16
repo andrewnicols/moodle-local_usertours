@@ -11,7 +11,7 @@
     <location>amd/src/popper.js</location>
     <name>Popper.js</name>
     <license>MIT</license>
-    <version>v0.5.2</version>
+    <version>v0.6.4</version>
     <licenseversion></licenseversion>
   </library>
 </libraries>

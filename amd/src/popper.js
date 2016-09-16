@@ -1,7 +1,7 @@
-// jshint ignore: start
+/* jshint ignore:start */
 /**
  * @fileOverview Kickass library to create and place poppers near their reference elements.
- * @version 0.5.2
+ * @version 0.6.4
  * @license
  * Copyright (c) 2016 Federico Zivolo and contributors
  *
@@ -145,7 +145,7 @@
      */
     function Popper(reference, popper, options) {
         this._reference = reference.jquery ? reference[0] : reference;
-        this.state = {};
+        this.state = { onCreateCalled: false };
 
         // if the popper variable is a configuration object, parse it to generate an HTMLElement
         // generate a default popper if is not defined
@@ -211,7 +211,7 @@
 
         // remove the popper if user explicity asked for the deletion on destroy
         if (this._options.removeOnDestroy) {
-            this._popper.remove();
+            this._popper.parentNode.removeChild(this._popper);
         }
         return this;
     };
@@ -224,23 +224,44 @@
     Popper.prototype.update = function() {
         var data = { instance: this, styles: {} };
 
-        // store placement inside the data object, modifiers will be able to edit `placement` if needed
-        // and refer to _originalPlacement to know the original value
-        data.placement = this._options.placement;
-        data._originalPlacement = this._options.placement;
+        // make sure to apply the popper position before any computation
+        this.state.position = this._getPosition(this._popper, this._reference);
+        setStyle(this._popper, { position: this.state.position});
 
-        // compute the popper and reference offsets and put them inside data.offsets
-        data.offsets = this._getOffsets(this._popper, this._reference, data.placement);
+        // to avoid useless computations we throttle the popper position refresh to 60fps
+        root.requestAnimationFrame(function() {
+            var now = root.performance.now();
+            if(now - this.state.lastFrame <= 16) {
+                // this update fired to early! drop it
+                return;
+            }
+            this.state.lastFrame = now;
 
-        // get boundaries
-        data.boundaries = this._getBoundaries(data, this._options.boundariesPadding, this._options.boundariesElement);
+            // store placement inside the data object, modifiers will be able to edit `placement` if needed
+            // and refer to _originalPlacement to know the original value
+            data.placement = this._options.placement;
+            data._originalPlacement = this._options.placement;
 
-        data = this.runModifiers(data, this._options.modifiers);
+            // compute the popper and trigger offsets and put them inside data.offsets
+            data.offsets = this._getOffsets(this._popper, this._reference, data.placement);
 
-        if (typeof this.state.updateCallback === 'function') {
-            this.state.updateCallback(data);
-        }
+            // get boundaries
+            data.boundaries = this._getBoundaries(data, this._options.boundariesPadding, this._options.boundariesElement);
 
+            data = this.runModifiers(data, this._options.modifiers);
+
+            if (!isFunction(this.state.createCalback)) {
+                this.state.onCreateCalled = true;
+            }
+            if (!this.state.onCreateCalled) {
+                this.state.onCreateCalled = true;
+                if (isFunction(this.state.createCalback)) {
+                    this.state.createCalback(this);
+                }
+            } else if (isFunction(this.state.updateCallback)) {
+                this.state.updateCallback(data);
+            }
+        }.bind(this));
     };
 
     /**
@@ -251,7 +272,7 @@
      */
     Popper.prototype.onCreate = function(callback) {
         // the createCallbacks return as first argument the popper instance
-        callback(this);
+        this.state.createCalback = callback;
         return this;
     };
 
@@ -378,7 +399,7 @@
 
         // Decide if the popper will be fixed
         // If the reference element is inside a fixed context, the popper will be fixed as well to allow them to scroll together
-        var isParentFixed = isFixed(reference, container);
+        var isParentFixed = isFixed(container);
         return isParentFixed ? 'fixed' : 'absolute';
     };
 
@@ -650,11 +671,12 @@
         // NOTE: 1 DOM access here
         this._popper.setAttribute('x-placement', data.placement);
 
-        // if the arrow modifier is required and the arrow style has been computed, apply the arrow style
-        if (this.isModifierRequired(this.modifiers.applyStyle, this.modifiers.arrow) && data.offsets.arrow) {
+        // if the arrow style has been computed, apply the arrow style
+        if (data.offsets.arrow) {
             setStyle(data.arrowElement, data.offsets.arrow);
         }
 
+        // return the data object to allow chaining of other modifiers
         return data;
     };
 
@@ -716,6 +738,7 @@
             },
             right: function() {
                 var left = popper.left;
+                console.log(popper.width);
                 if (popper.right > data.boundaries.right) {
                     left = Math.min(popper.left, data.boundaries.right - popper.width);
                 }
@@ -1069,7 +1092,10 @@
             ['scroll', 'auto'].indexOf(getStyleComputedProperty(element, 'overflow-x')) !== -1 ||
             ['scroll', 'auto'].indexOf(getStyleComputedProperty(element, 'overflow-y')) !== -1
         ) {
-            return element;
+            // If the detected scrollParent is body, we perform an additional check on its parentNode
+            // in this way we'll get body if the browser is Chrome-ish, or documentElement otherwise
+            // fixes issue #65
+            return element === root.document.body ? getScrollParent(element.parentNode) : element;
         }
         return element.parentNode ? getScrollParent(element.parentNode) : element;
     }
@@ -1083,7 +1109,7 @@
      * @returns {Boolean} answer to "isFixed?"
      */
     function isFixed(element) {
-        if (element === root.document.body) {
+        if (element === root.document.body || element.nodeName === 'HTML') {
             return false;
         }
         if (getStyleComputedProperty(element, 'position') === 'fixed') {
@@ -1271,5 +1297,32 @@
         });
     }
 
+    if (!root.requestAnimationFrame) {
+        var lastTime = 0;
+        var vendors = ['ms', 'moz', 'webkit', 'o'];
+        for(var x = 0; x < vendors.length && !root.requestAnimationFrame; ++x) {
+            root.requestAnimationFrame = root[vendors[x]+'RequestAnimationFrame'];
+            root.cancelAnimationFrame = root[vendors[x]+'CancelAnimationFrame'] || root[vendors[x]+'CancelRequestAnimationFrame'];
+        }
+
+        if (!root.requestAnimationFrame) {
+            root.requestAnimationFrame = function(callback, element) {
+                var currTime = new Date().getTime();
+                var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                var id = root.setTimeout(function() { callback(currTime + timeToCall); },
+                                           timeToCall);
+                lastTime = currTime + timeToCall;
+                return id;
+            };
+        }
+
+        if (!root.cancelAnimationFrame) {
+            root.cancelAnimationFrame = function(id) {
+                clearTimeout(id);
+            };
+        }
+    }
+
     return Popper;
 }));
+/* jshint ignore:end */

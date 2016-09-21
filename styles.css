@@ -163,3 +163,40 @@ div[data-flexitour="step-background-fader"],
     z-index: 4032;
     position: relative;
 }
+
+.tour-step-background,
+.tour-backdrop {
+  z-index: 4040;
+}
+.tour-step-backdrop,
+.tour-step-backdrop > td {
+  z-index: 4041;
+}
+.popover[class*="tour-"] {
+  z-index: 4042;
+  min-width: 300px;
+}
+/* End Moodle changes */
+
+.tour-actions > ul {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.tour-actions > ul > li {
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    height: 9em;
+    margin: .5em;
+    text-align: center;
+    width: 13em;
+}
+
+.tour-actions > ul > li > a {
+    height: 100%;
+    display: block;
+    padding: 1em;
+}

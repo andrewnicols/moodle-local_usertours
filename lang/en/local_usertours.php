@@ -146,7 +146,9 @@ You will also find your browser\'s developer tools to be extremely useful in cre
 ';
 $string['sharedtourslink'] = 'Tour repository';
 $string['viewtour_info'] = 'This is the \'{$a->tourname}\' tour. It applies to the path \'{$a->path}\'.';
+$string['viewtour_edit'] = 'You can <a href="{$a->editlink}">edit the tour defaults</a> and <a href="{$a->resetlink}">force the tour to be displayed</a> to all users again.';
 $string['event_tour_started'] = 'Tour started';
 $string['event_tour_reset'] = 'Tour reset';
 $string['event_tour_ended'] = 'Tour ended';
 $string['event_step_shown'] = 'Step shown';
+$string['tour_resetforall'] = 'The state of the tour has been reset. It will be displayed to all users again.';

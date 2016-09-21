@@ -108,6 +108,11 @@ class manager {
     const ACTION_SHOWTOUR = 'showtour';
 
     /**
+     * @var ACTION_RESETFORALL
+     */
+    const ACTION_RESETFORALL = 'resetforall';
+
+    /**
      * This is the entry point for this controller class.
      *
      * @param   string  $action     The action to perform.
@@ -147,6 +152,10 @@ class manager {
 
             case self::ACTION_DELETETOUR:
                 $this->delete_tour(required_param('id', PARAM_INT));
+                break;
+
+            case self::ACTION_RESETFORALL:
+                $this->reset_tour_for_all(required_param('id', PARAM_INT));
                 break;
 
             case self::ACTION_NEWSTEP:
@@ -428,6 +437,10 @@ class manager {
                 'tourname'  => $tour->get_name(),
                 'path'      => $tour->get_pathmatch(),
             ]));
+        echo \html_writer::div(get_string('viewtour_edit', 'local_usertours', [
+                'editlink'  => $tour->get_edit_link()->out(),
+                'resetlink' => $tour->get_reset_link()->out(),
+            ]));
 
         $table = new step_table($tourid);
         foreach ($tour->get_steps() as $step) {
@@ -491,6 +504,20 @@ class manager {
         $tour->remove();
 
         redirect(helper::get_list_tour_link());
+    }
+
+    /**
+     * Reset the tour state for all users.
+     *
+     * @param   int         $tourid     The ID of the tour to remove.
+     */
+    protected function reset_tour_for_all($tourid) {
+        require_sesskey();
+
+        $tour = tour::instance($tourid);
+        $tour->mark_major_change();
+
+        redirect(helper::get_view_tour_link($tourid), get_string('tour_resetforall', 'local_usertours'));
     }
 
     /**

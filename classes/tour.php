@@ -326,6 +326,15 @@ class tour {
     }
 
     /**
+     * The link to reset the state of this tour for all users.
+     *
+     * @return  moodle_url
+     */
+    public function get_reset_link() {
+        return helper::get_reset_tour_for_all_link($this->id);
+    }
+
+    /**
      * The link to export this tour.
      *
      * @return  moodle_url
@@ -615,6 +624,26 @@ class tour {
      */
     public function mark_user_completed() {
         set_user_preference(self::TOUR_LAST_COMPLETED_BY_USER . $this->get_id(), time());
+
+        return $this;
+    }
+
+    /**
+     * Update a tour giving it a new major update time.
+     * This will ensure that it is displayed to all users, even those who have already seen it.
+     *
+     * @return  $this
+     */
+    public function mark_major_change() {
+        global $DB;
+
+        // Clear old reset and completion notes.
+        $DB->delete_records('user_preferences', ['name' => self::TOUR_LAST_COMPLETED_BY_USER . $this->get_id()]);
+        $DB->delete_records('user_preferences', ['name' => self::TOUR_REQUESTED_BY_USER . $this->get_id()]);
+        $this
+            ->set_config('majorupdatetime', time())
+            ->persist()
+            ;
 
         return $this;
     }

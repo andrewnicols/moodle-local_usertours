@@ -137,6 +137,20 @@ class helper {
     }
 
     /**
+     * Get the link used to reset the tour state for all users.
+     *
+     * @param   int         $tourid     The ID of the tour to display.
+     * @return  moodle_url              The URL.
+     */
+    public static function get_reset_tour_for_all_link($tourid) {
+        return new \moodle_url('/local/usertours/configure.php', [
+                'id'        => $tourid,
+                'action'    => manager::ACTION_RESETFORALL,
+                'sesskey'   => sesskey(),
+            ]);
+    }
+
+    /**
      * Get the link used to edit the tour.
      *
      * @param   int         $tourid     The ID of the tour to edit.

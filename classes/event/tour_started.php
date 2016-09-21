@@ -94,7 +94,7 @@ class tour_started extends \core\event\base {
      */
     public function get_description() {
         return "The user with id '{$this->userid}' " .
-            "has started the tour with '{$this->objectid}' " .
+            "has started the tour with id '{$this->objectid}' " .
             "on the page with URL '{$this->other['pageurl']}'.";
     }
 

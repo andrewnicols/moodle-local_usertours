@@ -50,8 +50,9 @@ function(ajax, BootstrapTour, $, templates, str) {
                     {
                         methodname: 'local_usertours_fetch_tour',
                         args: {
-                            tourid: tourId,
-                            context: usertours.context
+                            tourid:     tourId,
+                            context:    usertours.context,
+                            pageurl:    window.location.href,
                         }
                     }
                 ])[0],
@@ -88,12 +89,16 @@ function(ajax, BootstrapTour, $, templates, str) {
          */
         startBootstrapTour: function(tourId, template, tourConfig) {
             if (usertours.currentTour) {
+                // End the current tour, but disable end tour handler.
                 tourConfig.onEnd = null;
                 usertours.currentTour.end();
             }
-            tourConfig.onEnd = usertours.markTourComplete;
 
-            // Add the templtae to the configuration.
+            // Add the various handlers.
+            tourConfig.onEnd = usertours.markTourComplete;
+            tourConfig.onShown = usertours.markStepShown;
+
+            // Add the template to the configuration.
             // This enables translations of the buttons.
             tourConfig.template = template;
 
@@ -104,16 +109,40 @@ function(ajax, BootstrapTour, $, templates, str) {
         },
 
         /**
+         * Mark the specified step as being shownd by the user.
+         *
+         * @param   Tour    tour     The data from the step.
+         */
+        markStepShown: function(tour) {
+            ajax.call([
+                {
+                    methodname: 'local_usertours_step_shown',
+                    args: {
+                        tourid:     usertours.tourId,
+                        context:    usertours.context,
+                        pageurl:    window.location.href,
+                        stepid:     tour.getStep(tour.getCurrentStep()).stepid,
+                        stepindex:  tour.getCurrentStep(),
+                    }
+                }
+            ]);
+        },
+
+        /**
          * Mark the specified tour as being completed by the user.
          *
-         * @param   int     tourId      The ID of the tour to mark complete.
+         * @param   Tour    our     The data from the tour.
          */
-        markTourComplete: function() {
+        markTourComplete: function(tour) {
             ajax.call([
                 {
                     methodname: 'local_usertours_complete_tour',
                     args: {
-                        tourid: usertours.tourId
+                        tourid:     usertours.tourId,
+                        context:    usertours.context,
+                        pageurl:    window.location.href,
+                        stepid:     tour.getStep(tour.getCurrentStep()).stepid,
+                        stepindex:  tour.getCurrentStep(),
                     }
                 }
             ]);
@@ -127,8 +156,9 @@ function(ajax, BootstrapTour, $, templates, str) {
                 {
                     methodname: 'local_usertours_reset_tour',
                     args: {
-                        path:   window.location.href,
-                        tourid: tourId
+                        tourid:     tourId,
+                        context:    usertours.context,
+                        pageurl:    window.location.href,
                     },
                     done: function(response) {
                         if (response.startTour) {

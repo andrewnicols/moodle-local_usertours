@@ -95,13 +95,10 @@ function(ajax, BootstrapTour, $, templates, str) {
                 delete usertours.currentTour;
             }
 
-            // Add the various handlers.
-            tourConfig.onEnd = usertours.markTourComplete;
-            tourConfig.onShown = usertours.markStepShown;
-
             // Normalize for the new library.
             tourConfig.eventHandlers = {
                 afterEnd: [usertours.markTourComplete],
+                afterRender: [usertours.markStepShown],
             };
 
             // Sort out the tour name.
@@ -131,18 +128,15 @@ function(ajax, BootstrapTour, $, templates, str) {
                 return step;
             });
 
-            tourConfig.steps[2].delay = 250;
-
             usertours.currentTour = new BootstrapTour(tourConfig);
             usertours.currentTour.startTour();
         },
 
         /**
          * Mark the specified step as being shownd by the user.
-         *
-         * @param   Tour    tour     The data from the step.
          */
-        markStepShown: function(tour) {
+        markStepShown: function() {
+            var stepConfig = this.getStepConfig(this.getCurrentStepNumber());
             ajax.call([
                 {
                     methodname: 'local_usertours_step_shown',
@@ -150,8 +144,8 @@ function(ajax, BootstrapTour, $, templates, str) {
                         tourid:     usertours.tourId,
                         context:    usertours.context,
                         pageurl:    window.location.href,
-                        stepid:     tour.getStep(tour.getCurrentStep()).stepid,
-                        stepindex:  tour.getCurrentStep(),
+                        stepid:     stepConfig.stepid,
+                        stepindex:  this.getCurrentStepNumber(),
                     }
                 }
             ]);
@@ -159,10 +153,9 @@ function(ajax, BootstrapTour, $, templates, str) {
 
         /**
          * Mark the specified tour as being completed by the user.
-         *
-         * @param   Tour    our     The data from the tour.
          */
-        markTourComplete: function(tour) {
+        markTourComplete: function() {
+            var stepConfig = this.getStepConfig(this.getCurrentStepNumber());
             ajax.call([
                 {
                     methodname: 'local_usertours_complete_tour',
@@ -170,8 +163,8 @@ function(ajax, BootstrapTour, $, templates, str) {
                         tourid:     usertours.tourId,
                         context:    usertours.context,
                         pageurl:    window.location.href,
-                        stepid:     tour.getStep(tour.getCurrentStep()).stepid,
-                        stepindex:  tour.getCurrentStep(),
+                        stepid:     stepConfig.stepid,
+                        stepindex:  this.getCurrentStepNumber(),
                     }
                 }
             ]);

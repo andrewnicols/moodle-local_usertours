@@ -297,7 +297,7 @@ class tour extends external_api {
      */
     public static function step_structure_returns() {
         return new external_single_structure([
-            'title'             => new external_value(PARAM_TEXT,
+            'title'             => new external_value(PARAM_RAW,
                     'Step Title'),
             'content'           => new external_value(PARAM_RAW,
                     'Step Content'),

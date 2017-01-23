@@ -531,8 +531,11 @@ class manager {
           ORDER BY sortorder ASC
 EOF;
 
+        $localurl = $pageurl->out_as_local_url();
+        $usertour = optional_param('usertour', '', PARAM_ALPHANUMEXT);
+        $localurl .= '&amp;usertour='.$usertour;
         $tours = $DB->get_records_sql($sql, array(
-            $pageurl->out_as_local_url(),
+            $localurl,
         ));
 
         foreach ($tours as $record) {

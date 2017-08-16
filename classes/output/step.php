@@ -56,10 +56,7 @@ class step implements \renderable {
     public function export_for_template(\renderer_base $output) {
         global $PAGE;
         $step = $this->step;
-
-        $result =  (object) [
-            'stepid'    => $step->get_id(),
-            'title'     => external_format_text(
+        $title = external_format_text(
                     static::get_string_from_input($step->get_title()),
                     FORMAT_HTML,
                     $PAGE->context->id,
@@ -69,7 +66,10 @@ class step implements \renderable {
                     [
                         'filter' => true,
                     ]
-                )[0],
+                )[0];
+        $result =  (object) [
+            'stepid'    => $step->get_id(),
+            'title'     => external_format_string($title, $PAGE->context->id),
             'content'   => external_format_text(
                     static::get_string_from_input($step->get_content()),
                     FORMAT_HTML,
